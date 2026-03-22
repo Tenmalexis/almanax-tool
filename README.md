@@ -2,13 +2,13 @@
 
 **Outil de suivi et de planification des Almanax pour Dofus 3 (Unity)**
 
-> Créé par [@Tenmalexis](https://www.youtube.com/@Tenmalexis) — YouTubeur Dofus
+> Créé par <a href="https://www.youtube.com/@Tenmalexis" target="_blank">@Tenmalexis</a> — YouTubeur Dofus
 
 ---
 
 ## 🔗 Accès direct
 
-👉 **[Ouvrir l'outil Almanax](https://tenmalexis.github.io/almanax-tool/Tenmalexis_Almanax_Tool.html)**
+👉 **<a href="https://tenmalexis.github.io/almanax-tool/Tenmalexis_Almanax_Tool.html" target="_blank">Ouvrir l'outil Almanax</a>**
 
 ---
 
@@ -60,4 +60,4 @@ Les données Almanax sont récupérées en temps réel via l'**API DofusDB** —
 
 Tu veux plus de guides, crafts rentables et outils Dofus ?
 
-👉 **[youtube.com/@Tenmalexis](https://www.youtube.com/@Tenmalexis)**
+👉 **<a href="https://www.youtube.com/@Tenmalexis" target="_blank">youtube.com/@Tenmalexis</a>**
