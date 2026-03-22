@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗓️ Tenmalexis — Almanax Tool</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #1A1A2E; color: #ECF0F1; min-height: 100vh; }
+
+  .header {
+    background: linear-gradient(135deg, #0F3460, #1A1A2E);
+    padding: 24px 32px;
+    border-bottom: 3px solid #E94560;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .header h1 { font-size: 22px; color: #fff; }
+  .header span { font-size: 13px; color: #BDC3C7; margin-top: 4px; display: block; }
+
+  .controls {
+    background: #16213E;
+    padding: 20px 32px;
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    border-bottom: 1px solid #2C3E50;
+  }
+  .controls label { font-size: 13px; color: #BDC3C7; margin-right: 6px; }
+  .controls input[type="month"], .controls select {
+    background: #0F3460; color: #fff; border: 1px solid #2980B9;
+    padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;
+  }
+  .btn {
+    padding: 10px 24px; border-radius: 6px; border: none;
+    font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary { background: #E94560; color: #fff; }
+  .btn-primary:hover { background: #c0392b; }
+  .btn-secondary { background: #2980B9; color: #fff; }
+  .btn-secondary:hover { background: #1a6a9a; }
+  .btn-success { background: #27AE60; color: #fff; }
+  .btn-success:hover { background: #1e8449; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .stats-bar {
+    display: flex; gap: 16px; padding: 16px 32px;
+    background: #0F3460; border-bottom: 1px solid #2C3E50; flex-wrap: wrap;
+  }
+  .stat-box {
+    background: #16213E; border-radius: 8px; padding: 12px 20px;
+    border: 1px solid #2C3E50; text-align: center; min-width: 130px;
+  }
+  .stat-box .val { font-size: 22px; font-weight: bold; color: #F5A623; }
+  .stat-box .lbl { font-size: 11px; color: #BDC3C7; margin-top: 3px; }
+
+  .content { padding: 24px 32px; }
+
+  .loading {
+    text-align: center; padding: 60px;
+    font-size: 16px; color: #BDC3C7;
+  }
+  .spinner {
+    display: inline-block; width: 32px; height: 32px;
+    border: 3px solid #2C3E50; border-top-color: #E94560;
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    background: #2C1217; border: 1px solid #E94560; border-radius: 8px;
+    padding: 20px; color: #E94560; font-size: 14px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #0F3460; }
+  th { padding: 12px 10px; text-align: left; font-size: 12px; color: #BDC3C7; border-bottom: 2px solid #E94560; white-space: nowrap; }
+  td { padding: 10px 10px; border-bottom: 1px solid #2C3E50; vertical-align: middle; background: #1A1A2E; }
+  tr:hover td { background: #1A2744; }
+  tr.weekend td { background: #1A1A2E; }
+  tr.today td { background: #1A1A2E !important; border-left: 3px solid #27AE60; }
+  tr.mentioned td { background: #1A2E1A; border-left: 3px solid #27AE60; }
+
+  .date-cell { font-weight: bold; color: #fff; white-space: nowrap; }
+  .jour-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 11px; font-weight: bold; margin-left: 6px;
+  }
+  .jour-dim { background: #2C3E50; color: #BDC3C7; }
+  .jour-mer { background: #2C3E50; color: #BDC3C7; }
+  .jour-lun { background: #2C3E50; color: #BDC3C7; }
+  .jour-autre { background: #2C3E50; color: #BDC3C7; }
+
+  .item-name { font-weight: bold; color: #F5A623; }
+  .item-qty { 
+    display: inline-block; background: #E94560; color: #fff;
+    padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;
+    margin-left: 6px;
+  }
+  .bonus-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; background: #2C3E50; color: #BDC3C7;
+  }
+  .bonus-xp { background: #1A3A5C; color: #5DADE2; }
+  .bonus-kamas { background: #3A2A0A; color: #F5A623; }
+  .bonus-drop { background: #1A3A2A; color: #27AE60; }
+
+  .score-bar {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .score-fill {
+    height: 8px; border-radius: 4px; transition: width 0.3s;
+  }
+  .score-val { font-size: 12px; font-weight: bold; min-width: 30px; }
+
+  .mention-btn {
+    padding: 4px 12px; border-radius: 12px; border: none;
+    font-size: 11px; cursor: pointer; font-weight: bold; transition: all 0.2s;
+  }
+  .mention-oui { background: #27AE60; color: #fff; }
+  .mention-non { background: #2C3E50; color: #BDC3C7; }
+  .mention-btn:hover { opacity: 0.85; }
+
+  .export-section {
+    margin-top: 24px; background: #16213E; border-radius: 8px;
+    padding: 20px; border: 1px solid #2C3E50;
+  }
+  .export-section h3 { color: #F5A623; margin-bottom: 12px; font-size: 14px; }
+  .script-output {
+    background: #0F3460; border-radius: 6px; padding: 16px;
+    font-size: 12px; line-height: 1.8; white-space: pre-wrap;
+    max-height: 300px; overflow-y: auto; color: #ECF0F1;
+    border: 1px solid #2980B9;
+  }
+
+  .filter-bar {
+    display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px; border-radius: 16px; border: 1px solid #2C3E50;
+    background: transparent; color: #BDC3C7; font-size: 12px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn.active { background: #E94560; border-color: #E94560; color: #fff; }
+
+  .month-cell {
+    padding: 7px 4px; border-radius: 8px; border: 1px solid transparent;
+    font-size: 12px; font-weight: bold; cursor: pointer; text-align: center;
+    color: #BDC3C7; background: transparent; transition: all 0.15s;
+  }
+  .month-cell:hover { background: #0F3460; border-color: #2980B9; color: #fff; }
+  .month-cell.selected { background: #E94560; border-color: #E94560; color: #fff; }
+  .month-cell.current-month { border-color: #27AE60; color: #27AE60; }
+  .month-cell.current-month.selected { background: #E94560; border-color: #E94560; color: #fff; }
+
+  
+  .copy-btn {
+    background: #2C3E50; color: #BDC3C7; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 8px;
+  }
+  .copy-btn:hover { background: #3D5166; }
+
+  .top-items {
+    background: #16213E; border-radius: 8px; padding: 16px;
+    margin-bottom: 24px; border: 1px solid #F5A623;
+  }
+  .top-items h3 { color: #F5A623; font-size: 13px; margin-bottom: 12px; }
+  .top-item-row { 
+    display: flex; align-items: center; gap: 10px; 
+    padding: 6px 0; border-bottom: 1px solid #2C3E50;
+  }
+  .top-item-row:last-child { border: none; }
+  .top-rank { color: #E94560; font-weight: bold; font-size: 14px; min-width: 24px; }
+  .top-name { flex: 1; color: #F5A623; font-size: 13px; }
+  .top-count { background: #0F3460; color: #5DADE2; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size: 36px;">🗓️</div>
+  <div>
+    <h1>TENMALEXIS — ALMANAX TOOL</h1>
+    <span><a href="https://www.youtube.com/@Tenmalexis" target="_blank" style="color:#E94560; text-decoration:none; font-weight:bold;">▶ youtube.com/@Tenmalexis</a></span>
+  </div>
+</div>
+
+<div class="controls">
+  <div style="position:relative;">
+    <label>Mois :</label>
+    <!-- hidden input pour la compatibilité avec fetchAlmanax -->
+    <input type="hidden" id="monthPicker" value="2026-04">
+    <!-- Custom picker display -->
+    <div id="monthPickerBtn" onclick="toggleMonthPicker()" style="
+      display:inline-flex; align-items:center; gap:10px;
+      background:#0F3460; border:1px solid #2980B9; border-radius:8px;
+      padding:8px 16px; cursor:pointer; user-select:none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-size:14px; font-weight:bold; color:#fff; min-width:160px;
+    " onmouseenter="this.style.borderColor='#E94560'" onmouseleave="this.style.borderColor='#2980B9'">
+      <span style="font-size:16px;">🗓️</span>
+      <span id="monthPickerLabel">Avril 2026</span>
+      <span id="monthPickerArrow" style="margin-left:auto; font-size:10px; color:#BDC3C7;">▼</span>
+    </div>
+    <!-- Dropdown panel -->
+    <div id="monthPickerPanel" style="
+      display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:999;
+      background:#16213E; border:1px solid #2980B9; border-radius:12px;
+      padding:16px; box-shadow:0 8px 32px rgba(0,0,0,0.5); width:280px;
+    ">
+      <!-- Year nav -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <button onclick="changePickerYear(-1)" style="background:#0F3460; color:#fff; border:none; border-radius:6px; width:32px; height:32px; cursor:pointer; font-size:16px; line-height:1;">‹</button>
+        <span id="pickerYear" style="color:#F5A623; font-weight:bold; font-size:15px;">2026</span>
+        <button onclick="changePickerYear(+1)" style="background:#0F3460; color:#fff; border:none; border-radius:6px; width:32px; height:32px; cursor:pointer; font-size:16px; line-height:1;">›</button>
+      </div>
+      <!-- Month grid -->
+      <div id="monthGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;"></div>
+    </div>
+  </div>
+  <button class="btn btn-primary" id="fetchBtn" onclick="fetchAlmanax()">
+    🔄 Charger le mois
+  </button>
+  <button class="btn btn-success" id="exportExcelBtn" onclick="exportToCSV()" style="display:none">
+    📥 Export CSV (Excel)
+  </button>
+  <button class="btn btn-secondary" id="copyScriptBtn" onclick="generateScript()" style="display:none">
+    📝 Générer script vidéo
+  </button>
+  <button class="btn" id="clearSaveBtn" onclick="clearSave()" style="display:none; background:#2C3E50; color:#BDC3C7;">
+    🗑️ Effacer save
+  </button>
+</div>
+
+<!-- Toast save confirmation -->
+<div id="saveToast" style="
+  position:fixed; bottom:24px; right:24px; z-index:9999;
+  background:#27AE60; color:#fff; padding:10px 20px;
+  border-radius:8px; font-size:13px; font-weight:bold;
+  opacity:0; transform:translateY(10px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events:none; box-shadow:0 4px 16px rgba(0,0,0,0.4);
+">💾 Sauvegardé !</div>
+
+<div class="stats-bar" id="statsBar" style="display:none">
+
+  <div class="stat-box">
+    <div class="val" id="stat-kamas" style="color:#F5A623">—</div>
+    <div class="lbl">Bonus kamas</div>
+  </div>
+  <div class="stat-box">
+    <div class="val" id="stat-xp" style="color:#5DADE2">—</div>
+    <div class="lbl">Bonus XP</div>
+  </div>
+  <div class="stat-box">
+    <div class="val" id="stat-drop" style="color:#27AE60">—</div>
+    <div class="lbl">Bonus drop/loot</div>
+  </div>
+  <div class="stat-box">
+    <div class="val" id="stat-mention" style="color:#E94560">—</div>
+    <div class="lbl">À mentionner</div>
+  </div>
+
+</div>
+
+<div class="content">
+  <div class="loading" id="loadingDiv" style="display:none">
+    <span class="spinner"></span> Chargement des données Almanax...
+  </div>
+  <div class="error-box" id="errorDiv" style="display:none"></div>
+  <div id="mainContent" style="display:none">
+    
+    <div class="filter-bar">
+      <span style="color:#BDC3C7; font-size:12px; align-self:center">Filtrer :</span>
+      <button class="filter-btn active" onclick="filterTable('all', this)">Tous</button>
+      <button class="filter-btn" onclick="filterTable('kamas', this)">💰 Kamas</button>
+      <button class="filter-btn" onclick="filterTable('xp', this)">⭐ XP</button>
+      <button class="filter-btn" onclick="filterTable('drop', this)">🎲 Drop/Loot</button>
+      <button class="filter-btn" onclick="filterTable('mention', this)">📌 À mentionner</button>
+
+    </div>
+
+    <table id="almanaxTable">
+      <thead>
+        <tr>
+          <th>Jour</th>
+          <th>Date</th>
+          <th>Ressource requise</th>
+          <th>Qté</th>
+          <th>Type de bonus</th>
+          <th>Description bonus</th>
+          <th>📌 Mentionner</th>
+        </tr>
+      </thead>
+      <tbody id="almanaxBody"></tbody>
+    </table>
+
+    <div class="export-section" id="scriptSection" style="display:none">
+      <h3>📝 SCRIPT GÉNÉRÉ — Almanax <span id="scriptMoisTitre"></span></h3>
+      <button class="copy-btn" onclick="copyScript()">📋 Copier</button>
+      <div class="script-output" id="scriptOutput"></div>
+    </div>
+  </div>
+  
+  <div id="welcomeDiv" style="text-align:center; padding:60px; color:#BDC3C7;">
+    <div style="font-size:60px; margin-bottom:16px;">🗓️</div>
+    <div style="font-size:18px; color:#fff; margin-bottom:8px;">Sélectionne un mois et clique sur "Charger"</div>
+    <div style="font-size:13px;">Les données sont récupérées en temps réel depuis api.dofusdu.de</div>
+  </div>
+</div>
+
+<script>
+let almanaxData = [];
+let mentionState = {};
+
+// ── LocalStorage Save / Load ─────────────────────────────────
+function getSaveKey() {
+  const month = document.getElementById('monthPicker').value;
+  return `almanax_mentions_${month}`;
+}
+
+function saveMentions() {
+  const key = getSaveKey();
+  localStorage.setItem(key, JSON.stringify(mentionState));
+  showSaveToast();
+}
+
+function loadMentions() {
+  const key = getSaveKey();
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  return null;
+}
+
+function clearSave() {
+  if (!confirm('Effacer la sauvegarde de ce mois ?')) return;
+  localStorage.removeItem(getSaveKey());
+  showSaveToast('🗑️ Save effacée');
+}
+
+function showSaveToast(msg) {
+  let toast = document.getElementById('saveToast');
+  toast.textContent = msg || '💾 Sauvegardé !';
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateY(0)';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+  }, 2000);
+}
+// ─────────────────────────────────────────────────────────────
+
+const JOURS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const JOURS_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function getBonusType(description) {
+  const d = description?.toLowerCase() || '';
+  if (d.includes('kama') || d.includes('méridian')) return 'kamas';
+  if (d.includes('expérience') || d.includes('xp') || d.includes('experience')) return 'xp';
+  if (d.includes('butin') || d.includes('drop') || d.includes('loot') || d.includes('pros') || d.includes('pêche') || d.includes('mine') || d.includes('bûcheron') || d.includes('herboris') || d.includes('métier')) return 'drop';
+  if (d.includes('pm') || d.includes('pa ') || d.includes('portée') || d.includes('ini') || d.includes('combat') || d.includes('dégât')) return 'combat';
+  return 'autre';
+}
+
+function getBonusScore(data) {
+  const type = getBonusType(data.bonus?.description);
+  const desc = data.bonus?.description?.toLowerCase() || '';
+  let score = 5;
+  if (type === 'kamas') score = 9;
+  else if (type === 'xp') score = 8;
+  else if (type === 'drop') score = 7;
+  else if (type === 'combat') score = 6;
+  if (desc.includes('+50%') || desc.includes('50 %')) score = Math.min(10, score + 1);
+  if (desc.includes('+100%') || desc.includes('100 %') || desc.includes('double')) score = Math.min(10, score + 2);
+  if (desc.includes('tous les métiers') || desc.includes('toutes les zones')) score = Math.min(10, score + 1);
+  return score;
+}
+
+function getScoreColor(score) {
+  if (score >= 9) return '#E94560';
+  if (score >= 7) return '#F5A623';
+  if (score >= 5) return '#27AE60';
+  return '#BDC3C7';
+}
+
+async function fetchAlmanax() {
+  const month = document.getElementById('monthPicker').value;
+  const level = 200;
+  if (!month) return;
+
+  const [year, mon] = month.split('-').map(Number);
+  const daysInMonth = new Date(year, mon, 0).getDate();
+  const fromDate = `${year}-${String(mon).padStart(2,'0')}-01`;
+
+  document.getElementById('welcomeDiv').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('errorDiv').style.display = 'none';
+  document.getElementById('loadingDiv').style.display = 'block';
+  document.getElementById('fetchBtn').disabled = true;
+
+  try {
+    const url = `https://api.dofusdu.de/dofus3/v1/fr/almanax?range%5Bfrom%5D=${fromDate}&range%5Bsize%5D=${daysInMonth}&timezone=Europe%2FParis&level=${level}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — Vérifier la connexion`);
+    almanaxData = await resp.json();
+
+    const savedMentions = loadMentions();
+    mentionState = {};
+    almanaxData.forEach((d, i) => {
+      if (savedMentions && savedMentions[i] !== undefined) {
+        mentionState[i] = savedMentions[i];
+      } else {
+        mentionState[i] = getBonusScore(d) >= 7;
+      }
+    });
+
+    renderTable(almanaxData, year, mon);
+    renderStats(almanaxData, year, mon);
+    renderTopItems(almanaxData);
+
+    document.getElementById('loadingDiv').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('exportExcelBtn').style.display = 'inline-block';
+    document.getElementById('copyScriptBtn').style.display = 'inline-block';
+    document.getElementById('clearSaveBtn').style.display = 'inline-block';
+    document.getElementById('scriptSection').style.display = 'none';
+
+  } catch(e) {
+    document.getElementById('loadingDiv').style.display = 'none';
+    document.getElementById('errorDiv').style.display = 'block';
+    document.getElementById('errorDiv').innerHTML = `
+      ❌ <strong>Erreur de connexion à l'API</strong><br><br>
+      ${e.message}<br><br>
+      <strong>Solutions :</strong><br>
+      • Vérifier la connexion internet<br>
+      • L'API api.dofusdu.de est peut-être temporairement indisponible<br>
+      • Réessayer dans quelques secondes
+    `;
+    document.getElementById('welcomeDiv').style.display = 'block';
+  }
+  document.getElementById('fetchBtn').disabled = false;
+}
+
+function renderTopItems(data) { /* supprimé */ }
+
+function renderStats(data, year, mon) {
+  const kamas = data.filter(d => getBonusType(d.bonus?.description) === 'kamas').length;
+  const xp    = data.filter(d => getBonusType(d.bonus?.description) === 'xp').length;
+  const drop  = data.filter(d => getBonusType(d.bonus?.description) === 'drop').length;
+  const mention = Object.values(mentionState).filter(v => v).length;
+  
+  document.getElementById('stat-kamas').textContent = kamas;
+  document.getElementById('stat-xp').textContent = xp;
+  document.getElementById('stat-drop').textContent = drop;
+  document.getElementById('stat-mention').textContent = mention;
+}
+
+function toggleMention(idx) {
+  mentionState[idx] = !mentionState[idx];
+  const btn = document.getElementById(`mention-btn-${idx}`);
+  const row = btn?.closest('tr');
+  if (mentionState[idx]) {
+    btn.textContent = '✅ Oui'; btn.className = 'mention-btn mention-oui';
+    if (row) row.classList.add('mentioned');
+  } else {
+    btn.textContent = '❌ Non'; btn.className = 'mention-btn mention-non';
+    if (row) row.classList.remove('mentioned');
+  }
+  document.getElementById('stat-mention').textContent = Object.values(mentionState).filter(v => v).length;
+  saveMentions();
+}
+
+function renderTable(data, year, mon) {
+  const tbody = document.getElementById('almanaxBody');
+  const today = new Date().toISOString().split('T')[0];
+  tbody.innerHTML = '';
+
+  data.forEach((d, i) => {
+    const dateObj = new Date(d.date);
+    const jourIdx = dateObj.getDay();
+    const jourStr = JOURS_SHORT[jourIdx];
+    const jourFull = JOURS_FR[jourIdx];
+    const score = getBonusScore(d);
+    const bonusType = getBonusType(d.bonus?.description);
+    const isToday = d.date === today;
+    const isWeekend = jourIdx === 0 || jourIdx === 6;
+    const isKeyDay = jourIdx === 0 || jourIdx === 3 || jourIdx === 1; // Dim, Mer, Lun
+
+    const jourClass = jourIdx === 0 ? 'jour-dim' : (jourIdx === 3 ? 'jour-mer' : (jourIdx === 1 ? 'jour-lun' : 'jour-autre'));
+
+    let bonusBadgeClass = 'bonus-badge';
+    if (bonusType === 'kamas') bonusBadgeClass += ' bonus-kamas';
+    else if (bonusType === 'xp') bonusBadgeClass += ' bonus-xp';
+    else if (bonusType === 'drop') bonusBadgeClass += ' bonus-drop';
+
+    const scoreColor = getScoreColor(score);
+    const scoreWidth = score * 10;
+
+    const mention = mentionState[i];
+    const trClass = (isToday ? 'today' : (isWeekend ? 'weekend' : '')) + (mention ? ' mentioned' : '');
+
+    const row = document.createElement('tr');
+    row.className = trClass;
+    row.dataset.bonusType = bonusType;
+    row.dataset.isKeyDay = isKeyDay;
+    row.dataset.mention = mention;
+    row.dataset.idx = i;
+
+    row.innerHTML = `
+      <td class="date-cell">
+        ${isToday ? '📍 ' : ''}<span class="jour-badge ${jourClass}">${jourStr}</span>
+      </td>
+      <td class="date-cell">${String(dateObj.getDate()).padStart(2,'0')}/${String(mon).padStart(2,'0')}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${d.tribute?.item?.image_urls?.sd
+            ? `<img src="${d.tribute.item.image_urls.sd}" alt="" style="width:32px;height:32px;object-fit:contain;border-radius:4px;background:#0F3460;padding:2px;flex-shrink:0;" onerror="this.style.display='none'">`
+            : ''}
+          <span class="item-name">${d.tribute?.item?.name || '—'}</span>
+        </div>
+      </td>
+      <td><span class="item-qty">×${d.tribute?.quantity || '?'}</span></td>
+      <td><span class="${bonusBadgeClass}">${d.bonus?.type?.name || '—'}</span></td>
+      <td style="font-size:12px; color:#BDC3C7; max-width:400px; line-height:1.5">${d.bonus?.description || '—'}</td>
+      <td>
+        <button id="mention-btn-${i}" class="mention-btn ${mention ? 'mention-oui' : 'mention-non'}" 
+                onclick="toggleMention(${i})">
+          ${mention ? '✅ Oui' : '❌ Non'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function filterTable(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const rows = document.querySelectorAll('#almanaxBody tr');
+  rows.forEach(row => {
+    let show = true;
+    if (type === 'kamas') show = row.dataset.bonusType === 'kamas';
+    else if (type === 'xp') show = row.dataset.bonusType === 'xp';
+    else if (type === 'drop') show = row.dataset.bonusType === 'drop';
+    else if (type === 'mention') show = row.dataset.mention === 'true';
+    else if (type === 'weekend') show = row.dataset.isKeyDay === 'true';
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function exportToCSV() {
+  if (!almanaxData.length) return;
+  const month = document.getElementById('monthPicker').value;
+  const [year, mon] = month.split('-').map(Number);
+
+  let csv = '\uFEFF'; // BOM for Excel UTF-8
+  csv += 'Jour;Date;Almanax;Ressource;Quantité;Type Bonus;Description Bonus;Score /10;Mentionner\n';
+  
+  almanaxData.forEach((d, i) => {
+    const dateObj = new Date(d.date);
+    const jourFull = JOURS_FR[dateObj.getDay()];
+    const dateStr = `${String(dateObj.getDate()).padStart(2,'0')}/${String(mon).padStart(2,'0')}/${year}`;
+    const score = getBonusScore(d);
+    const mention = mentionState[i] ? 'Oui' : 'Non';
+    
+    const clean = s => (s || '').replace(/;/g, ',').replace(/\n/g, ' ');
+    csv += [
+      jourFull,
+      dateStr,
+      clean(d.tribute?.quest?.name),
+      clean(d.tribute?.item?.name),
+      d.tribute?.quantity || '',
+      clean(d.bonus?.type?.name),
+      clean(d.bonus?.description),
+      score,
+      mention
+    ].join(';') + '\n';
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const moisNom = MOIS_FR[mon-1];
+  a.download = `Almanax_${moisNom}_${year}_Tenmalexis.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function generateScript() {
+  if (!almanaxData.length) return;
+  const month = document.getElementById('monthPicker').value;
+  const [year, mon] = month.split('-').map(Number);
+  const moisNom = MOIS_FR[mon-1];
+
+  // Trier par score desc
+  const toMention = almanaxData
+    .map((d, i) => ({ ...d, idx: i, score: getBonusScore(d), mention: mentionState[i] }))
+    .filter(d => d.mention)
+    .sort((a, b) => b.score - a.score);
+
+  const kamas = almanaxData.filter(d => getBonusType(d.bonus?.description) === 'kamas').length;
+  const xp = almanaxData.filter(d => getBonusType(d.bonus?.description) === 'xp').length;
+
+  let script = `═══════════════════════════════════════════
+SCRIPT VIDÉO — Les MEILLEURS ALMANAX en ${moisNom.toUpperCase()} ${year} sur DOFUS ?!
+Généré automatiquement par Tenmalexis Almanax Tool
+═══════════════════════════════════════════
+
+🎬 INTRO (0:00 → 0:30)
+"Voici les meilleurs almanax du mois de ${moisNom} — je les ai classés par rentabilité.
+Ce mois-ci on a ${kamas} jours de bonus kamas et ${xp} jours de bonus XP.
+Sans perdre de temps, voilà ce qu'il faut absolument faire ce mois-ci."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏆 ALMANAX À MENTIONNER EN PRIORITÉ (${toMention.length} sélectionnés)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+`;
+
+  toMention.forEach((d, rank) => {
+    const dateObj = new Date(d.date);
+    const jourFull = JOURS_FR[dateObj.getDay()];
+    const dateStr = `${String(dateObj.getDate()).padStart(2,'0')}/${String(mon).padStart(2,'0')}`;
+    script += `${rank+1}. [Score ${d.score}/10] ${jourFull} ${dateStr}
+   📦 Ressource : ${d.tribute?.item?.name || '?'} ×${d.tribute?.quantity || '?'}
+   💎 Bonus : ${d.bonus?.type?.name || '?'}
+   📋 Détail : ${d.bonus?.description || '?'}
+   🎬 Texte suggéré : "Le ${dateStr}, pensez à apporter ${d.tribute?.quantity} ${d.tribute?.item?.name} — le bonus ${d.bonus?.type?.name?.toLowerCase() || ''} vaut vraiment le détour !"
+
+`;
+  });
+
+  script += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ CONCLUSION
+"Voilà pour les almanax de ${moisNom} — pensez à les faire régulièrement, 
+ça fait une différence sur le long terme que ce soit pour les kamas ou l'XP.
+Si ça vous a aidé, un like c'est toujours apprécié, et à bientôt !"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 STATS DU MOIS
+• Bonus kamas : ${kamas} jours
+• Bonus XP : ${xp} jours  
+• Bonus drop/loot : ${almanaxData.filter(d => getBonusType(d.bonus?.description) === 'drop').length} jours
+• Almanax sélectionnés : ${toMention.length}/${almanaxData.length}
+`;
+
+  document.getElementById('scriptOutput').textContent = script;
+  document.getElementById('scriptMoisTitre').textContent = `${moisNom} ${year}`;
+  document.getElementById('scriptSection').style.display = 'block';
+  document.getElementById('scriptSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyScript() {
+  const text = document.getElementById('scriptOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Copié !';
+    setTimeout(() => btn.textContent = '📋 Copier', 2000);
+  });
+}
+
+// ── Custom Month Picker ──────────────────────────────────────
+const MOIS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+let pickerYear = 2026;
+let pickerMonth = 4; // 1-based
+
+function initPicker() {
+  const today = new Date();
+  pickerYear = 2026; pickerMonth = 4;
+  renderPickerGrid();
+  document.addEventListener('click', e => {
+    const panel = document.getElementById('monthPickerPanel');
+    const btn = document.getElementById('monthPickerBtn');
+    if (panel && !panel.contains(e.target) && !btn.contains(e.target)) {
+      closePicker();
+    }
+  });
+}
+
+function toggleMonthPicker() {
+  const panel = document.getElementById('monthPickerPanel');
+  const arrow = document.getElementById('monthPickerArrow');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent = isOpen ? '▼' : '▲';
+}
+
+function closePicker() {
+  document.getElementById('monthPickerPanel').style.display = 'none';
+  document.getElementById('monthPickerArrow').textContent = '▼';
+}
+
+function changePickerYear(delta) {
+  pickerYear += delta;
+  document.getElementById('pickerYear').textContent = pickerYear;
+  renderPickerGrid();
+}
+
+function renderPickerGrid() {
+  const today = new Date();
+  const grid = document.getElementById('monthGrid');
+  grid.innerHTML = '';
+  MOIS_SHORT.forEach((name, i) => {
+    const m = i + 1;
+    const cell = document.createElement('div');
+    cell.className = 'month-cell';
+    cell.textContent = name;
+    if (m === pickerMonth && pickerYear === parseInt(document.getElementById('pickerYear').textContent)) {
+      cell.classList.add('selected');
+    }
+    if (m === today.getMonth() + 1 && pickerYear === today.getFullYear()) {
+      cell.classList.add('current-month');
+    }
+    cell.onclick = () => selectPickerMonth(m);
+    grid.appendChild(cell);
+  });
+}
+
+function selectPickerMonth(m) {
+  pickerMonth = m;
+  const yr = parseInt(document.getElementById('pickerYear').textContent);
+  pickerYear = yr;
+  // Sync hidden input
+  const val = `${yr}-${String(m).padStart(2,'0')}`;
+  document.getElementById('monthPicker').value = val;
+  // Update label
+  const moisCapitalized = MOIS_FR[m-1].charAt(0).toUpperCase() + MOIS_FR[m-1].slice(1);
+  document.getElementById('monthPickerLabel').textContent = `${moisCapitalized} ${yr}`;
+  renderPickerGrid();
+  closePicker();
+  // Auto-fetch
+  fetchAlmanax();
+}
+
+initPicker();
+// ─────────────────────────────────────────────────────────────
+
+// Re-sync mention state when filtering
+document.addEventListener('click', () => {
+  const rows = document.querySelectorAll('#almanaxBody tr');
+  rows.forEach(row => {
+    const idx = row.dataset.idx;
+    if (idx !== undefined) row.dataset.mention = mentionState[idx];
+  });
+});
+</script>
+</body>
+</html>
