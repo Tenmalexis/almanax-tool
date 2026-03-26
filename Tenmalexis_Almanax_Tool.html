@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<!-- saved from url=(0067)file:///C:/Users/ACHAT/Downloads/Tenmalexis_Almanax_Tool%20(6).html -->
-<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🗓️ Tenmalexis — Almanax Tool</title>
-<link href="./🗓️ Tenmalexis — Almanax Tool_files/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=rajdhani:400,500,600,700|dm-sans:300,400,500,600&display=swap" rel="stylesheet">
+<style>
+/* Fallback si Bunny Fonts échoue */
+@font-face {
+  font-family: 'Rajdhani';
+  src: local('Rajdhani'), local('Trebuchet MS'), local('Impact');
+}
+</style>
 <style>
   :root {
     --bg:        #080B12;
@@ -473,25 +482,25 @@
       <span id="monthPickerLabel">Avril 2026</span>
       <span id="monthPickerArrow" class="arrow">▼</span>
     </div>
-    <div id="monthPickerPanel" style="display: none;">
+    <div id="monthPickerPanel">
       <div class="picker-year-nav">
         <button class="picker-year-btn" onclick="changePickerYear(-1)">‹</button>
         <span id="pickerYear">2026</span>
         <button class="picker-year-btn" onclick="changePickerYear(+1)">›</button>
       </div>
-      <div id="monthGrid"><div class="month-cell">Jan</div><div class="month-cell">Fév</div><div class="month-cell current-month">Mar</div><div class="month-cell selected">Avr</div><div class="month-cell">Mai</div><div class="month-cell">Jun</div><div class="month-cell">Jul</div><div class="month-cell">Aoû</div><div class="month-cell">Sep</div><div class="month-cell">Oct</div><div class="month-cell">Nov</div><div class="month-cell">Déc</div></div>
+      <div id="monthGrid"></div>
     </div>
   </div>
   <button class="btn btn-primary" id="fetchBtn" onclick="fetchAlmanax()">
     🔄 Charger le mois
   </button>
-  <button class="btn btn-success" id="exportExcelBtn" onclick="exportToCSV()" style="display: inline-flex;">
+  <button class="btn btn-success" id="exportExcelBtn" onclick="exportToCSV()" style="display:none">
     📥 Export CSV
   </button>
-  <button class="btn btn-video" id="copyScriptBtn" onclick="generateScript()" style="display: inline-flex;">
+  <button class="btn btn-video" id="copyScriptBtn" onclick="generateScript()" style="display:none">
     📝 Script vidéo
   </button>
-  <button class="btn btn-ghost" id="clearSaveBtn" onclick="clearSave()" style="display: inline-flex;">
+  <button class="btn btn-ghost" id="clearSaveBtn" onclick="clearSave()" style="display:none">
     🗑️ Effacer save
   </button>
 </div>
@@ -500,41 +509,41 @@
 <div id="saveToast">💾 Sauvegardé !</div>
 
 <!-- STATS BAR -->
-<div class="stats-bar" id="statsBar" style="display: flex;">
+<div class="stats-bar" id="statsBar" style="display:none">
   <div class="stat-card kamas">
-    <div class="stat-val kamas" id="stat-kamas">1</div>
+    <div class="stat-val kamas" id="stat-kamas">—</div>
     <div class="stat-lbl">Bonus kamas</div>
   </div>
   <div class="stat-card xp">
-    <div class="stat-val xp" id="stat-xp">8</div>
+    <div class="stat-val xp" id="stat-xp">—</div>
     <div class="stat-lbl">Bonus XP</div>
   </div>
   <div class="stat-card drop">
-    <div class="stat-val drop" id="stat-drop">10</div>
+    <div class="stat-val drop" id="stat-drop">—</div>
     <div class="stat-lbl">Bonus drop / loot</div>
   </div>
   <div class="stat-card mention">
-    <div class="stat-val mention" id="stat-mention">16</div>
+    <div class="stat-val mention" id="stat-mention">—</div>
     <div class="stat-lbl">À mentionner</div>
   </div>
 </div>
 
 <!-- CONTENT -->
 <div class="content">
-  <div class="loading" id="loadingDiv" style="display: none;">
+  <div class="loading" id="loadingDiv" style="display:none">
     <div class="spinner"></div>
     <span>Chargement des données Almanax…</span>
   </div>
   <div class="error-box" id="errorDiv" style="display:none"></div>
 
-  <div id="mainContent" style="display: block;">
+  <div id="mainContent" style="display:none">
     <div class="filter-bar">
       <span class="filter-label">Filtrer</span>
-      <button class="filter-btn active" onclick="filterTable(&#39;all&#39;, this)">Tous</button>
-      <button class="filter-btn" onclick="filterTable(&#39;kamas&#39;, this)">💰 Kamas</button>
-      <button class="filter-btn" onclick="filterTable(&#39;xp&#39;, this)">⭐ XP</button>
-      <button class="filter-btn" onclick="filterTable(&#39;drop&#39;, this)">🎲 Drop / Loot</button>
-      <button class="filter-btn" onclick="filterTable(&#39;mention&#39;, this)">📌 À mentionner</button>
+      <button class="filter-btn active" onclick="filterTable('all', this)">Tous</button>
+      <button class="filter-btn" onclick="filterTable('kamas', this)">💰 Kamas</button>
+      <button class="filter-btn" onclick="filterTable('xp', this)">⭐ XP</button>
+      <button class="filter-btn" onclick="filterTable('drop', this)">🎲 Drop / Loot</button>
+      <button class="filter-btn" onclick="filterTable('mention', this)">📌 À mentionner</button>
     </div>
 
     <div class="table-wrap">
@@ -550,689 +559,7 @@
             <th>📌 Mentionner</th>
           </tr>
         </thead>
-        <tbody id="almanaxBody"><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="true" data-mention="true" data-idx="0">
-      <td>
-        
-        <span class="day-badge jour-mer">Mer</span>
-      </td>
-      <td>
-        <span class="date-num">01/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/15100-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Fluide Glacial</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×3</span></td>
-      <td><span class="bonus-badge bonus-xp">Points d'expérience et butin sur les créatures marines</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 50 % sur tous les monstres considérés comme des créatures marines (pichons, monstres des plages, corailleurs, crustorails, tortues de Moon, muldos sauvages, crabe Hijacob, gélikan, Kralamoure Géant, monstres des abysses de Sufokia, Mercemers, Submergés, Crocodailles de Crocuzko).</span></td>
-      <td>
-        <button id="mention-btn-0" class="mention-btn mention-oui" onclick="toggleMention(0)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="autre" data-is-key-day="false" data-mention="true" data-idx="1">
-      <td>
-        
-        <span class="day-badge ">Jeu</span>
-      </td>
-      <td>
-        <span class="date-num">02/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/93221-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Petit Extrait d'Abreuvoir</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×5</span></td>
-      <td><span class="bonus-badge">Challenge supplémentaire</span></td>
-      <td><span class="bonus-desc">Un challenge supplémentaire est généré contre les monstres présents dans la zone du Territoire Cacterre.</span></td>
-      <td>
-        <button id="mention-btn-1" class="mention-btn mention-oui" onclick="toggleMention(1)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="false" data-mention="true" data-idx="2">
-      <td>
-        
-        <span class="day-badge ">Ven</span>
-      </td>
-      <td>
-        <span class="date-num">03/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/164738-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Lanterne usée</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×3</span></td>
-      <td><span class="bonus-badge bonus-xp">Points d'expérience</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 75 % dans la zone du Mont des Tombeaux.</span></td>
-      <td>
-        <button id="mention-btn-2" class="mention-btn mention-oui" onclick="toggleMention(2)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="weekend mentioned" data-bonus-type="autre" data-is-key-day="false" data-mention="true" data-idx="3">
-      <td>
-        
-        <span class="day-badge ">Sam</span>
-      </td>
-      <td>
-        <span class="date-num">04/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/10007-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Ceinture de Sécurité</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge">Objets de qualité</span></td>
-      <td><span class="bonus-desc">La qualité des objets fabriqués dans la ville de Sufokia est augmentée.</span></td>
-      <td>
-        <button id="mention-btn-3" class="mention-btn mention-oui" onclick="toggleMention(3)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="weekend mentioned" data-bonus-type="xp" data-is-key-day="true" data-mention="true" data-idx="4">
-      <td>
-        
-        <span class="day-badge jour-dim">Dim</span>
-      </td>
-      <td>
-        <span class="date-num">05/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/105648-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Œuf de Dragoeuf Calcaire</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge bonus-xp">Quête répétable et chocomania</span></td>
-      <td><span class="bonus-desc">Une quête répétable spéciale est disponible aujourd'hui près du sanctuaire des Zobals. Réalisable à partir du niveau 20, elle est indépendante de la quête d'offrande. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 30 % dans toutes les zones de l'Île de Pwâk.</span></td>
-      <td>
-        <button id="mention-btn-4" class="mention-btn mention-oui" onclick="toggleMention(4)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="drop" data-is-key-day="true" data-mention="true" data-idx="5">
-      <td>
-        
-        <span class="day-badge jour-lun">Lun</span>
-      </td>
-      <td>
-        <span class="date-num">06/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/47106-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Canine de Mergranlou</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×5</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 75 % dans la zone des Hauts des Hurlements.</span></td>
-      <td>
-        <button id="mention-btn-5" class="mention-btn mention-oui" onclick="toggleMention(5)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="6">
-      <td>
-        
-        <span class="day-badge ">Mar</span>
-      </td>
-      <td>
-        <span class="date-num">07/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/34082-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Orge</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×50</span></td>
-      <td><span class="bonus-badge">Récolte abondante</span></td>
-      <td><span class="bonus-desc">Les quantités d'Orge récupérées par les Paysans sont augmentées de 125 %.</span></td>
-      <td>
-        <button id="mention-btn-6" class="mention-btn mention-non" onclick="toggleMention(6)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="true" data-mention="true" data-idx="7">
-      <td>
-        
-        <span class="day-badge jour-mer">Mer</span>
-      </td>
-      <td>
-        <span class="date-num">08/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/24018-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Carapace Verte</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×6</span></td>
-      <td><span class="bonus-badge bonus-xp">Points d'expérience</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 75 % dans la zone de la Plage de la Tortue.</span></td>
-      <td>
-        <button id="mention-btn-7" class="mention-btn mention-oui" onclick="toggleMention(7)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="autre" data-is-key-day="false" data-mention="true" data-idx="8">
-      <td>
-        
-        <span class="day-badge ">Jeu</span>
-      </td>
-      <td>
-        <span class="date-num">09/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/53658-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Plume de Gobvious</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×5</span></td>
-      <td><span class="bonus-badge">Challenges augmentés</span></td>
-      <td><span class="bonus-desc">Les bonus apportés par les challenges réussis sont augmentés de 150 % dans le donjon du Théâtre de Dramak.</span></td>
-      <td>
-        <button id="mention-btn-8" class="mention-btn mention-oui" onclick="toggleMention(8)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="9">
-      <td>
-        
-        <span class="day-badge ">Ven</span>
-      </td>
-      <td>
-        <span class="date-num">10/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/9029-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Anneau Fortifiant</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×2</span></td>
-      <td><span class="bonus-badge">Efficacité des enclos</span></td>
-      <td><span class="bonus-desc">Dans les enclos, l'effet des baffeurs est doublé.</span></td>
-      <td>
-        <button id="mention-btn-9" class="mention-btn mention-non" onclick="toggleMention(9)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend" data-bonus-type="xp" data-is-key-day="false" data-mention="false" data-idx="10">
-      <td>
-        
-        <span class="day-badge ">Sam</span>
-      </td>
-      <td>
-        <span class="date-num">11/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/15281-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Bout de Blop Coco</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×6</span></td>
-      <td><span class="bonus-badge bonus-xp">Anomalies temporelles</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 50 % dans toutes les zones influencées par une anomalie temporelle. De plus, les gains d'expérience et les chances d'obtenir du butin sont augmentés de 25 % dans la zone du Lac de Cania.</span></td>
-      <td>
-        <button id="mention-btn-10" class="mention-btn mention-non" onclick="toggleMention(10)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend" data-bonus-type="drop" data-is-key-day="true" data-mention="false" data-idx="11">
-      <td>
-        
-        <span class="day-badge jour-dim">Dim</span>
-      </td>
-      <td>
-        <span class="date-num">12/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/164767-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Os de Jiangshi-Nobi</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×3</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Armée de Brume.</span></td>
-      <td>
-        <button id="mention-btn-11" class="mention-btn mention-non" onclick="toggleMention(11)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="drop" data-is-key-day="true" data-mention="true" data-idx="12">
-      <td>
-        
-        <span class="day-badge jour-lun">Lun</span>
-      </td>
-      <td>
-        <span class="date-num">13/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/38001-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Bois de Kaliptus</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×40</span></td>
-      <td><span class="bonus-badge bonus-drop">Bois abondant</span></td>
-      <td><span class="bonus-desc">Les quantités de Bois d'Ébène et de Bois de Kaliptus récupérées par les Bûcherons sont augmentées de 125 %.</span></td>
-      <td>
-        <button id="mention-btn-12" class="mention-btn mention-oui" onclick="toggleMention(12)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="drop" data-is-key-day="false" data-mention="false" data-idx="13">
-      <td>
-        
-        <span class="day-badge ">Mar</span>
-      </td>
-      <td>
-        <span class="date-num">14/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/53113-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Plume du Kwak de Vent</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×4</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 100 % dans le Nid du Kwakwa.</span></td>
-      <td>
-        <button id="mention-btn-13" class="mention-btn mention-non" onclick="toggleMention(13)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="14">
-      <td>
-        
-        <span class="day-badge jour-mer">Mer</span>
-      </td>
-      <td>
-        <span class="date-num">15/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/84237-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Clef du Château Ensablé</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge">Fabrication intensive</span></td>
-      <td><span class="bonus-desc">Pour chaque objet fabriqué, les Bricoleurs ont 25 % de chances de créer un second objet.</span></td>
-      <td>
-        <button id="mention-btn-14" class="mention-btn mention-non" onclick="toggleMention(14)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="drop" data-is-key-day="false" data-mention="false" data-idx="15">
-      <td>
-        
-        <span class="day-badge ">Jeu</span>
-      </td>
-      <td>
-        <span class="date-num">16/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/41292-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Greuvette</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×40</span></td>
-      <td><span class="bonus-badge bonus-drop">Pêche abondante</span></td>
-      <td><span class="bonus-desc">Les quantités de Greuvette et de Crabe Sourimi récupérées par les Pêcheurs sont augmentées de 125 %.</span></td>
-      <td>
-        <button id="mention-btn-15" class="mention-btn mention-non" onclick="toggleMention(15)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="drop" data-is-key-day="false" data-mention="false" data-idx="16">
-      <td>
-        
-        <span class="day-badge ">Ven</span>
-      </td>
-      <td>
-        <span class="date-num">17/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/42026-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Multygely</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 75 % dans la zone de la péninsule des Gelées.</span></td>
-      <td>
-        <button id="mention-btn-16" class="mention-btn mention-non" onclick="toggleMention(16)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend" data-bonus-type="xp" data-is-key-day="false" data-mention="false" data-idx="17">
-      <td>
-        
-        <span class="day-badge ">Sam</span>
-      </td>
-      <td>
-        <span class="date-num">18/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/56668-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Cuir de Cuirboule</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×2</span></td>
-      <td><span class="bonus-badge bonus-xp">Points d'expérience</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 100 % dans le donjon des Salons privés de Klime.</span></td>
-      <td>
-        <button id="mention-btn-17" class="mention-btn mention-non" onclick="toggleMention(17)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend" data-bonus-type="drop" data-is-key-day="true" data-mention="false" data-idx="18">
-      <td>
-        
-        <span class="day-badge jour-dim">Dim</span>
-      </td>
-      <td>
-        <span class="date-num">19/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/39022-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Or</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×30</span></td>
-      <td><span class="bonus-badge bonus-drop">Minerai abondant</span></td>
-      <td><span class="bonus-desc">Les quantités d'Or récupérées par les Mineurs sont augmentées de 125 %.</span></td>
-      <td>
-        <button id="mention-btn-18" class="mention-btn mention-non" onclick="toggleMention(18)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="19">
-      <td>
-        
-        <span class="day-badge jour-lun">Lun</span>
-      </td>
-      <td>
-        <span class="date-num">20/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/164658-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Nectar de l'Orient</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×2</span></td>
-      <td><span class="bonus-badge">Challenges augmentés</span></td>
-      <td><span class="bonus-desc">Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Plantalas.</span></td>
-      <td>
-        <button id="mention-btn-19" class="mention-btn mention-non" onclick="toggleMention(19)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="20">
-      <td>
-        
-        <span class="day-badge ">Mar</span>
-      </td>
-      <td>
-        <span class="date-num">21/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/51008-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Boule polie</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge">Coffre au trésor</span></td>
-      <td><span class="bonus-desc">Une quête de chasse au trésor de Scheik est disponible aujourd'hui auprès de Dhain, à la Malle aux trésors.</span></td>
-      <td>
-        <button id="mention-btn-20" class="mention-btn mention-non" onclick="toggleMention(20)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="drop" data-is-key-day="true" data-mention="true" data-idx="21">
-      <td>
-        
-        <span class="day-badge jour-mer">Mer</span>
-      </td>
-      <td>
-        <span class="date-num">22/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/47851-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Dent de Tilamproie</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×2</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Monstres des ruines sous-marines.</span></td>
-      <td>
-        <button id="mention-btn-21" class="mention-btn mention-oui" onclick="toggleMention(21)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="false" data-mention="true" data-idx="22">
-      <td>
-        
-        <span class="day-badge ">Jeu</span>
-      </td>
-      <td>
-        <span class="date-num">23/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/15093-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Bave de Ouassingue</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×5</span></td>
-      <td><span class="bonus-badge bonus-xp">Points d'expérience</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 50 % sur les créatures de type Monstres des Tourbières.</span></td>
-      <td>
-        <button id="mention-btn-22" class="mention-btn mention-oui" onclick="toggleMention(22)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="23">
-      <td>
-        
-        <span class="day-badge ">Ven</span>
-      </td>
-      <td>
-        <span class="date-num">24/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/84265-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Clef du Nid du Kwakwa</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge">Challenge supplémentaire</span></td>
-      <td><span class="bonus-desc">Un challenge supplémentaire est généré contre les monstres présents dans la zone de la Montagne des Craqueleurs.</span></td>
-      <td>
-        <button id="mention-btn-23" class="mention-btn mention-non" onclick="toggleMention(23)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="24">
-      <td>
-        
-        <span class="day-badge ">Sam</span>
-      </td>
-      <td>
-        <span class="date-num">25/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/63473-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Viande Rassie</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×6</span></td>
-      <td><span class="bonus-badge">Gibier abondant</span></td>
-      <td><span class="bonus-desc">Les quantités de Viande Rassie et de Viande Exsudative récupérées par les Chasseurs sont augmentées de 125 %.</span></td>
-      <td>
-        <button id="mention-btn-24" class="mention-btn mention-non" onclick="toggleMention(24)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class="weekend mentioned" data-bonus-type="kamas" data-is-key-day="true" data-mention="true" data-idx="25">
-      <td>
-        
-        <span class="day-badge jour-dim">Dim</span>
-      </td>
-      <td>
-        <span class="date-num">26/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/15881-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Kamatrix</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge bonus-kamas">Quêtes et kamas</span></td>
-      <td><span class="bonus-desc">Les gains de kamas sont augmentés de 100 % pour toutes les quêtes.</span></td>
-      <td>
-        <button id="mention-btn-25" class="mention-btn mention-oui" onclick="toggleMention(25)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="26">
-      <td>
-        
-        <span class="day-badge jour-lun">Lun</span>
-      </td>
-      <td>
-        <span class="date-num">27/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/106562-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Oreille de Foufayteur</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×6</span></td>
-      <td><span class="bonus-badge">Challenges augmentés</span></td>
-      <td><span class="bonus-desc">Les bonus apportés par les challenges réussis sont augmentés de 125 % sur les créatures de type Ruffians de Cania.</span></td>
-      <td>
-        <button id="mention-btn-26" class="mention-btn mention-non" onclick="toggleMention(26)">
-          — Non
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="drop" data-is-key-day="false" data-mention="true" data-idx="27">
-      <td>
-        
-        <span class="day-badge ">Mar</span>
-      </td>
-      <td>
-        <span class="date-num">28/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/50098-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Cristal</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×1</span></td>
-      <td><span class="bonus-badge bonus-drop">Minerai abondant</span></td>
-      <td><span class="bonus-desc">Les quantités de minerai récupérées par les Mineurs de tous niveaux sont augmentées de 100 %.</span></td>
-      <td>
-        <button id="mention-btn-27" class="mention-btn mention-oui" onclick="toggleMention(27)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="drop" data-is-key-day="true" data-mention="true" data-idx="28">
-      <td>
-        
-        <span class="day-badge jour-mer">Mer</span>
-      </td>
-      <td>
-        <span class="date-num">29/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/53014-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Plume de Tofu</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×6</span></td>
-      <td><span class="bonus-badge bonus-drop">Butin</span></td>
-      <td><span class="bonus-desc">Les chances d'obtenir du butin sont augmentées de 50 % sur les créatures de type Tofus et Gros Tofus.</span></td>
-      <td>
-        <button id="mention-btn-28" class="mention-btn mention-oui" onclick="toggleMention(28)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="autre" data-is-key-day="false" data-mention="true" data-idx="29">
-      <td>
-        
-        <span class="day-badge ">Jeu</span>
-      </td>
-      <td>
-        <span class="date-num">30/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/58067-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Graine de Pandouille</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×40</span></td>
-      <td><span class="bonus-badge">Cueillette abondante</span></td>
-      <td><span class="bonus-desc">Les quantités de Plantes récupérées par les Alchimistes de tous niveaux sont augmentées de 100 %.</span></td>
-      <td>
-        <button id="mention-btn-29" class="mention-btn mention-oui" onclick="toggleMention(29)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="false" data-mention="true" data-idx="30">
-      <td>
-        
-        <span class="day-badge ">Ven</span>
-      </td>
-      <td>
-        <span class="date-num">01/04</span>
-      </td>
-      <td>
-        <div class="item-row">
-          <img src="./🗓️ Tenmalexis — Almanax Tool_files/15711-128.png" class="item-img" alt="" onerror="this.style.display=&#39;none&#39;">
-          <span class="item-name">Capsule Explosive</span>
-        </div>
-      </td>
-      <td><span class="qty-badge">×2</span></td>
-      <td><span class="bonus-badge bonus-xp">Fabrique Féérique</span></td>
-      <td><span class="bonus-desc">Les gains d'expérience sont augmentés de 50 % pour tous les métiers. De plus, pour chaque Fée d'Artifice fabriquée, les personnages ont 25 % de chances de créer une seconde Fée et 15 % de chances d'économiser des ingrédients. Ils peuvent aussi récupérer 2 fois plus de Capsules Explosives en combattant des Bworks Mages.</span></td>
-      <td>
-        <button id="mention-btn-30" class="mention-btn mention-oui" onclick="toggleMention(30)">
-          ✅ Oui
-        </button>
-      </td>
-    </tr></tbody>
+        <tbody id="almanaxBody"></tbody>
       </table>
     </div>
 
@@ -1245,7 +572,7 @@
     </div>
   </div>
 
-  <div class="welcome" id="welcomeDiv" style="display: none;">
+  <div class="welcome" id="welcomeDiv">
     <div class="welcome-icon">🗓️</div>
     <h2>Sélectionne un mois et clique sur Charger</h2>
     <p>Les données sont récupérées en temps réel depuis api.dofusdu.de</p>
@@ -1342,7 +669,7 @@ async function fetchAlmanax() {
 
   try {
     const url = `https://api.dofusdu.de/dofus3/v1/fr/almanax?range%5Bfrom%5D=${fromDate}&range%5Bsize%5D=${daysInMonth}&timezone=Europe%2FParis&level=${level}`;
-    const resp = await fetch(url);
+    const resp = await fetch(url, { mode: 'cors' });
     if (!resp.ok) throw new Error(`HTTP ${resp.status} — Vérifier la connexion`);
     almanaxData = await resp.json();
 
@@ -1653,6 +980,5 @@ document.addEventListener('click', () => {
   });
 });
 </script>
-
-
-</body></html>
+</body>
+</html>
