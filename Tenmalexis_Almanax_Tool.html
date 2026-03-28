@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0072)file:///C:/Users/adtg6/Downloads/Tenmalexis_Almanax_Tool_responsive.html -->
+<!-- saved from url=(0074)file:///C:/Users/adtg6/Downloads/Tenmalexis_Almanax_Tool_responsive_1.html -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="chrome-extension://cpmkedoipcpimgecpmgpldfpohjplkpp/gt-window-provider-hedera.js"></script>
 
 <meta http-equiv="Cache-Control" content="no-cache">
@@ -20,54 +20,31 @@
 
   /* ── TABLETTE (≤ 900px) ── */
   @media (max-width: 900px) {
-    .header {
-      padding: 14px 18px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    .header { padding: 14px 18px; flex-wrap: wrap; gap: 10px; }
     .header-title { font-size: 16px; letter-spacing: 1px; }
     .header-sub   { display: none; }
     .header-icon  { width: 34px; height: 34px; font-size: 16px; }
-
-    .controls {
-      padding: 12px 18px;
-      gap: 8px;
-    }
-
+    .controls { padding: 12px 18px; gap: 8px; }
     .btn { font-size: 11px; padding: 6px 12px; }
-
     .stats-bar { padding: 12px 18px; gap: 8px; }
     .stat-card { padding: 10px 14px; min-width: 100px; }
     .stat-val  { font-size: 22px; }
-
     .content { padding: 14px 18px; }
-
     table { font-size: 12px; }
     th, td { padding: 8px 10px; }
-
-    .bonus-desc { max-width: 240px; }
+    .bonus-desc { max-width: 200px; }
   }
 
   /* ── MOBILE (≤ 600px) ── */
   @media (max-width: 600px) {
-    .header {
-      padding: 10px 12px;
-      gap: 8px;
-    }
-    .header-title { font-size: 14px; }
-    .header-icon  { width: 28px; height: 28px; font-size: 14px; }
+    .header { padding: 10px 12px; gap: 8px; }
+    .header-title { font-size: 13px; }
+    .header-icon  { width: 26px; height: 26px; font-size: 13px; }
     .header-link  { display: none; }
 
-    .controls {
-      padding: 10px 12px;
-      gap: 6px;
-    }
-    #monthPickerBtn {
-      font-size: 13px;
-      padding: 7px 12px;
-      min-width: 130px;
-    }
-    .btn { font-size: 10px; padding: 6px 10px; }
+    .controls { padding: 10px 12px; gap: 6px; }
+    #monthPickerBtn { font-size: 12px; padding: 6px 10px; min-width: 120px; }
+    .btn { font-size: 10px; padding: 5px 8px; }
     .controls-label { display: none; }
 
     .stats-bar {
@@ -76,33 +53,41 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-    .stat-val { font-size: 20px; }
+    .stat-val { font-size: 18px; }
     .stat-lbl { font-size: 9px; }
 
-    .content { padding: 10px 12px; }
+    .content { padding: 8px 10px; }
 
-    .filter-bar { gap: 6px; }
-    .filter-btn { font-size: 11px; padding: 4px 10px; }
+    .filter-bar { gap: 5px; margin-bottom: 10px; }
+    .filter-btn { font-size: 10px; padding: 4px 9px; }
+    .filter-label { display: none; }
 
-    /* Table responsive — scroll horizontal */
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { font-size: 11px; min-width: 560px; }
-    th    { font-size: 9px; padding: 8px 8px; }
-    td    { padding: 7px 8px; }
+    /* ── TABLE : 7 → 5 colonnes sur mobile ── */
+    /* Masquer "Date" (on garde "Jour") et "Description bonus" */
+    th:nth-child(2), td:nth-child(2) { display: none; } /* Date */
+    th:nth-child(6), td:nth-child(6) { display: none; } /* Description bonus */
 
-    .item-name  { font-size: 11px; }
-    .item-img   { width: 26px; height: 26px; }
-    .qty-badge  { font-size: 10px; padding: 2px 7px; }
-    .bonus-badge { font-size: 9px; padding: 2px 7px; }
-    .bonus-desc  { font-size: 10px; max-width: 160px; }
-    .day-badge   { font-size: 9px; padding: 2px 6px; }
-    .date-num    { font-size: 12px; }
+    .table-wrap { overflow: visible; border-radius: 8px; }
+    table { width: 100%; font-size: 10.5px; }
+    th { font-size: 8px; padding: 6px 5px; letter-spacing: 0.5px; }
+    td { padding: 8px 5px; vertical-align: middle; }
 
-    .mention-btn { font-size: 10px; padding: 4px 8px; }
+    .day-badge  { font-size: 8.5px; padding: 2px 5px; }
+    .date-num   { font-size: 10px; }
 
-    /* Script section */
-    .script-output { font-size: 11px; max-height: 200px; }
-    .script-header { padding: 10px 14px; }
+    .item-row   { gap: 5px; flex-wrap: nowrap; }
+    .item-img   { width: 22px; height: 22px; }
+    .item-name  { font-size: 10.5px; }
+
+    .qty-badge  { font-size: 9px; padding: 2px 5px; }
+    .bonus-badge { font-size: 8.5px; padding: 2px 5px; }
+    .bonus-desc  { display: none; } /* masqué aussi dans la col visible */
+
+    .mention-btn { font-size: 9.5px; padding: 4px 7px; }
+
+    .script-output { font-size: 10.5px; max-height: 180px; padding: 12px; }
+    .script-header { padding: 10px 12px; }
+    .copy-btn { font-size: 10px; padding: 4px 9px; }
   }
 </style>
 <style>
@@ -614,7 +599,7 @@
     <div class="stat-lbl">Bonus drop / loot</div>
   </div>
   <div class="stat-card mention">
-    <div class="stat-val mention" id="stat-mention">19</div>
+    <div class="stat-val mention" id="stat-mention">20</div>
     <div class="stat-lbl">À mentionner</div>
   </div>
 </div>
@@ -650,7 +635,7 @@
             <th>📌 Mentionner</th>
           </tr>
         </thead>
-        <tbody id="almanaxBody"><tr class="" data-bonus-type="xp" data-is-key-day="true" data-mention="false" data-idx="0" style="">
+        <tbody id="almanaxBody"><tr class=" mentioned" data-bonus-type="xp" data-is-key-day="true" data-mention="true" data-idx="0">
       <td>
         
         <span class="day-badge jour-mer">Mer</span>
@@ -668,11 +653,11 @@
       <td><span class="bonus-badge bonus-xp">Points d'expérience et butin sur les créatures marines</span></td>
       <td><span class="bonus-desc">Les gains d'expérience et les chances d'obtenir du butin sont augmentés de 50 % sur tous les monstres considérés comme des créatures marines (pichons, monstres des plages, corailleurs, crustorails, tortues de Moon, muldos sauvages, crabe Hijacob, gélikan, Kralamoure Géant, monstres des abysses de Sufokia, Mercemers, Submergés, Crocodailles de Crocuzko).</span></td>
       <td>
-        <button id="mention-btn-0" class="mention-btn mention-non" onclick="toggleMention(0)">
-          — Non
+        <button id="mention-btn-0" class="mention-btn mention-oui" onclick="toggleMention(0)">
+          ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="1" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="1">
       <td>
         
         <span class="day-badge ">Jeu</span>
@@ -716,7 +701,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="weekend" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="3" style="">
+    </tr><tr class="weekend" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="3">
       <td>
         
         <span class="day-badge ">Sam</span>
@@ -782,7 +767,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="6" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="6">
       <td>
         
         <span class="day-badge ">Mar</span>
@@ -826,7 +811,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="8" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="8">
       <td>
         
         <span class="day-badge ">Jeu</span>
@@ -848,7 +833,7 @@
           — Non
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="9" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="9">
       <td>
         
         <span class="day-badge ">Ven</span>
@@ -958,7 +943,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="14" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="14">
       <td>
         
         <span class="day-badge jour-mer">Mer</span>
@@ -1068,7 +1053,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="19" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="19">
       <td>
         
         <span class="day-badge jour-lun">Lun</span>
@@ -1090,7 +1075,7 @@
           — Non
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="20" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="20">
       <td>
         
         <span class="day-badge ">Mar</span>
@@ -1156,7 +1141,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="23" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="23">
       <td>
         
         <span class="day-badge ">Ven</span>
@@ -1178,7 +1163,7 @@
           — Non
         </button>
       </td>
-    </tr><tr class="weekend" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="24" style="">
+    </tr><tr class="weekend" data-bonus-type="autre" data-is-key-day="false" data-mention="false" data-idx="24">
       <td>
         
         <span class="day-badge ">Sam</span>
@@ -1222,7 +1207,7 @@
           ✅ Oui
         </button>
       </td>
-    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="26" style="">
+    </tr><tr class="" data-bonus-type="autre" data-is-key-day="true" data-mention="false" data-idx="26">
       <td>
         
         <span class="day-badge jour-lun">Lun</span>
